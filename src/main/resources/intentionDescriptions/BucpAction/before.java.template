@@ -1,0 +1,6 @@
+public class MyController {
+  public User info() {
+    <spot>User user = new User();</spot>
+    return user;
+  }
+}

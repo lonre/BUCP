@@ -1,0 +1,21 @@
+<idea-plugin>
+  <id>com.github.lonre.bucp</id>
+  <name>BUCP</name>
+  <vendor email="lonrevip@gmail.com" url="https://github.com/lonre/BUCP">Lonre Wang</vendor>
+
+  <description>BUCP generates boilerplate codes for copying bean properties, BYE BeanUtils.copyProperties</description>
+
+  <!--
+  https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+  https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html
+  -->
+  <depends>com.intellij.modules.platform</depends>
+  <depends>com.intellij.modules.java</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <intentionAction>
+      <className>com.github.lonre.bucp.plugin.action.BucpAction</className>
+      <category>BUCP</category>
+    </intentionAction>
+  </extensions>
+</idea-plugin>

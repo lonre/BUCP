@@ -1,0 +1,8 @@
+public class MyController {
+  public User info() {
+    User user = new User();
+    user.setId(...);
+    user.setName(...);
+    return user;
+  }
+}
