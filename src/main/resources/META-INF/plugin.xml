@@ -14,6 +14,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <intentionAction>
+      <language>JAVA</language>
       <className>com.github.lonre.bucp.plugin.action.BucpAction</className>
       <category>BUCP</category>
     </intentionAction>

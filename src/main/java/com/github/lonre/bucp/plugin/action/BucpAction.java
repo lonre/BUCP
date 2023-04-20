@@ -4,6 +4,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNull;
 
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
+import com.intellij.codeInsight.intention.preview.IntentionPreviewInfo;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
@@ -18,12 +19,13 @@ import com.intellij.psi.PsiCodeBlock;
 import com.intellij.psi.PsiDeclarationStatement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementFactory;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiLocalVariable;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiParserFacade.SERVICE;
+import com.intellij.psi.PsiParserFacade;
 import com.intellij.psi.PsiStatement;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.PsiTypes;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiTypesUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -32,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.jetbrains.annotations.Nls;
@@ -40,7 +41,7 @@ import org.jetbrains.annotations.Nls.Capitalization;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * https://github.com/JetBrains/intellij-sdk-docs/blob/master/code_samples/conditional_operator_intention/src/main/java/org/intellij/sdk/intention/ConditionalOperatorConverter.java
+ * @see <a href="https://github.com/JetBrains/intellij-sdk-docs/tree/main/code_samples/conditional_operator_intention/src/main/java/org/intellij/sdk/intention">code_samples</a>
  */
 public class BucpAction extends PsiElementBaseIntentionAction {
   public static class BucpParam {
@@ -147,7 +148,7 @@ public class BucpAction extends PsiElementBaseIntentionAction {
     }
 
     for (PsiMethod m : methodList) {
-      lastElement = parentCodeBlock.addAfter(SERVICE.getInstance(project).createWhiteSpaceFromText("\n"), lastElement); // PsiJavaToken:SEMICOLON
+      lastElement = parentCodeBlock.addAfter(PsiParserFacade.getInstance(project).createWhiteSpaceFromText("\n"), lastElement); // PsiJavaToken:SEMICOLON
       lastElement = requireNonNull(PsiTreeUtil.getParentOfType(lastElement, PsiStatement.class)).getNextSibling(); // PsiStatement
 
       String p = "";
@@ -164,7 +165,7 @@ public class BucpAction extends PsiElementBaseIntentionAction {
   private List<PsiMethod> extractSetMethods(PsiClass psiClass) {
     List<PsiMethod> methodList = new ArrayList<>();
     while (isNotSystemClass(psiClass)) {
-      methodList.addAll(Arrays.stream(requireNonNull(psiClass).getMethods()).filter(this::isValidSetMethod).collect(Collectors.toList()));
+      methodList.addAll(Arrays.stream(requireNonNull(psiClass).getMethods()).filter(this::isValidSetMethod).toList());
       psiClass = psiClass.getSuperClass();
     }
     return methodList;
@@ -189,7 +190,12 @@ public class BucpAction extends PsiElementBaseIntentionAction {
   }
 
   private String getterName(PsiMethod m) {
-    String prefix = PsiType.BOOLEAN.equals(requireNonNull(m.getParameterList().getParameters()[0]).getType()) ? "is" : "get";
+    String prefix = PsiTypes.booleanType().equals(requireNonNull(m.getParameterList().getParameters()[0]).getType()) ? "is" : "get";
     return m.getName().replaceFirst("set", prefix);
+  }
+
+  @Override
+  public @NotNull IntentionPreviewInfo generatePreview(@NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
+    return IntentionPreviewInfo.EMPTY;
   }
 }
