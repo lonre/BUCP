@@ -1,10 +1,10 @@
 plugins {
   id 'java'
-  id 'org.jetbrains.intellij' version '1.13.3'
+  id 'org.jetbrains.intellij' version '1.15.0'
 }
 
 group 'com.github.lonre'
-version '23.04.20'
+version '23.07.26'
 
 repositories {
   mavenCentral()
@@ -22,8 +22,9 @@ intellij {
 
 patchPluginXml {
   sinceBuild = '231'
-  untilBuild = '999.*'
+  // see: https://github.com/JetBrains/gradle-intellij-plugin/issues/1344
+  untilBuild = ''
   changeNotes = """
-    support 2023.1
+    prepare for 2023.2
   """
 }
